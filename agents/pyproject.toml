@@ -1,0 +1,15 @@
+[project]
+name = "pharos-agents"
+version = "0.1.0"
+description = "Pharos autonomous agents — market creator, pricing oracle, resolver"
+requires-python = ">=3.10"
+dependencies = [
+  "web3>=6.15",
+  "eth-account>=0.11",
+  "python-dotenv>=1.0",
+  "pharos-pricing",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pharos_agents*"]

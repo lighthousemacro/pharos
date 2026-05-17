@@ -1,0 +1,31 @@
+# Node / Hardhat
+node_modules/
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+web/.next/
+web/node_modules/
+web/out/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Secrets & local config
+.env
+.env.local
+*.key
+
+# Deployment artifacts that should be regenerated
+deployments/localhost.json
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+logs/

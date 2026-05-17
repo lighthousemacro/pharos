@@ -1,0 +1,22 @@
+[project]
+name = "pharos-pricing"
+version = "0.1.0"
+description = "Pharos pricing engine — Lighthouse Macro framework probabilities for binary macro markets"
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.0",
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "fastapi>=0.110",
+  "uvicorn>=0.27",
+  "requests>=2.31",
+  "python-dotenv>=1.0",
+]
+
+[project.scripts]
+pharos-price = "pharos_pricing.cli:main"
+pharos-serve = "pharos_pricing.service:run"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pharos_pricing*"]
