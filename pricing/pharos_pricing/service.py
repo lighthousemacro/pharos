@@ -9,6 +9,7 @@ from here, so the framework price has exactly one source of truth.
 from __future__ import annotations
 
 import os
+import time
 
 from fastapi import FastAPI, HTTPException
 
@@ -19,6 +20,21 @@ from .models import list_market_kinds, price_market
 app = FastAPI(title="Pharos Pricing", version="0.1.0")
 
 KEY_PILLARS = ["PCI", "LFI", "GCI", "MRI", "REC_PROB", "MSI", "SPI"]
+
+# Framework prices move with the daily pipeline, not intraday — a short
+# TTL cache keeps the API snappy without changing what it reports.
+_CACHE: dict[str, tuple[float, dict]] = {}
+_TTL = int(os.environ.get("PHAROS_CACHE_TTL", "600"))
+
+
+def _cached(key: str, build):
+    now = time.time()
+    hit = _CACHE.get(key)
+    if hit and now - hit[0] < _TTL:
+        return hit[1]
+    val = build()
+    _CACHE[key] = (now, val)
+    return val
 
 
 @app.get("/health")
@@ -62,7 +78,10 @@ def calendar(within_days: int = 60) -> dict:
 @app.get("/price")
 def price(kind: str, strike: float | None = None, ref_label: str = "next") -> dict:
     try:
-        return price_market(kind, strike, ref_label=ref_label)
+        return _cached(
+            f"price:{kind}:{strike}:{ref_label}",
+            lambda: price_market(kind, strike, ref_label=ref_label),
+        )
     except KeyError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:  # noqa: BLE001
@@ -73,17 +92,21 @@ def price(kind: str, strike: float | None = None, ref_label: str = "next") -> di
 def markets(within_days: int = 45) -> dict:
     """Calendar joined with framework prices — what the creator agent and
     the UI consume to know which markets to open and at what fair value."""
-    out = []
-    for e in cal.upcoming(within_days=within_days):
-        mk = cal.MARKET_KINDS[e.kind]
-        try:
-            p = price_market(e.kind, mk.default_strike, ref_label=e.ref_label)
-            p["market_key"] = e.market_key
-            p["resolve_dt"] = e.resolve_dt.isoformat()
-            out.append(p)
-        except Exception as exc:  # noqa: BLE001
-            out.append({"market_key": e.market_key, "error": str(exc)})
-    return {"count": len(out), "markets": out}
+
+    def build() -> dict:
+        out = []
+        for e in cal.upcoming(within_days=within_days):
+            mk = cal.MARKET_KINDS[e.kind]
+            try:
+                p = price_market(e.kind, mk.default_strike, ref_label=e.ref_label)
+                p["market_key"] = e.market_key
+                p["resolve_dt"] = e.resolve_dt.isoformat()
+                out.append(p)
+            except Exception as exc:  # noqa: BLE001
+                out.append({"market_key": e.market_key, "error": str(exc)})
+        return {"count": len(out), "markets": out}
+
+    return _cached(f"markets:{within_days}", build)
 
 
 @app.get("/kinds")

@@ -1,0 +1,111 @@
+/* Lighthouse Macro 23/89/BB palette */
+:root {
+  --ocean: #2389bb;     /* protagonist — framework */
+  --dusk: #ff6723;      /* antagonist — crowd */
+  --sky: #23bbff;
+  --sea: #00bb89;       /* win / value */
+  --venus: #ff2389;     /* alert */
+  --doldrums: #898989;
+  --navy: #0a1628;
+  --navy-2: #0f1f33;
+  --navy-3: #16273f;
+  --fog: #d1d1d1;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--navy);
+  color: #e9eef5;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.accent-bar { display: flex; height: 5px; width: 100%; }
+.accent-bar > .o { background: var(--ocean); flex: 2; }
+.accent-bar > .d { background: var(--dusk); flex: 1; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 28px 24px 64px; }
+
+.masthead { display: flex; align-items: baseline; gap: 16px; margin: 26px 0 6px; }
+.masthead h1 {
+  font-family: Montserrat, Inter, sans-serif; font-weight: 800;
+  font-size: 34px; letter-spacing: 0.14em; color: #fff;
+}
+.masthead .tag { color: var(--ocean); font-weight: 700; letter-spacing: 0.22em; font-size: 12px; }
+.sub { color: var(--doldrums); font-size: 14px; margin-bottom: 22px; line-height: 1.55; }
+.sub strong { color: var(--fog); }
+
+.banner {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; padding: 6px 12px; border-radius: 999px; margin-bottom: 22px;
+  border: 1px solid var(--navy-3);
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.live .dot { background: var(--sea); }
+.sample .dot { background: var(--dusk); }
+.live { color: var(--sea); }
+.sample { color: var(--dusk); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px; }
+
+.card {
+  background: linear-gradient(180deg, var(--navy-2), var(--navy));
+  border: 1px solid var(--navy-3); border-radius: 14px; padding: 20px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.card.resolved { opacity: 0.78; }
+.kindrow { display: flex; justify-content: space-between; align-items: center; }
+.kind {
+  font-family: "Source Code Pro", ui-monospace, monospace; font-size: 11px;
+  letter-spacing: 0.1em; color: var(--ocean); border: 1px solid var(--ocean);
+  padding: 3px 9px; border-radius: 6px;
+}
+.ref { font-size: 12px; color: var(--doldrums); }
+.q { font-size: 15px; line-height: 1.45; color: #f3f6fa; min-height: 44px; }
+
+.gauge { position: relative; height: 46px; margin: 4px 0 2px; }
+.track {
+  position: absolute; top: 19px; left: 0; right: 0; height: 8px;
+  background: var(--navy-3); border-radius: 6px;
+}
+.marker { position: absolute; top: 8px; transform: translateX(-50%); text-align: center; }
+.marker .pin { width: 3px; height: 30px; margin: 0 auto; border-radius: 2px; }
+.marker .lbl { font-size: 10px; margin-top: 3px; white-space: nowrap; font-weight: 700; }
+.m-fw .pin { background: var(--ocean); }
+.m-fw .lbl { color: var(--ocean); }
+.m-cr .pin { background: var(--dusk); }
+.m-cr .lbl { color: var(--dusk); }
+
+.edge {
+  display: flex; align-items: baseline; gap: 10px;
+  border-top: 1px solid var(--navy-3); padding-top: 12px;
+}
+.edge .big { font-family: Montserrat, sans-serif; font-weight: 800; font-size: 26px; }
+.edge .cap { font-size: 11px; color: var(--doldrums); letter-spacing: 0.08em; text-transform: uppercase; }
+.pos { color: var(--sea); }
+.neg { color: var(--venus); }
+.flat { color: var(--doldrums); }
+
+.why { font-size: 12.5px; line-height: 1.5; color: #c4cedd; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-family: "Source Code Pro", ui-monospace, monospace; font-size: 10.5px;
+  background: var(--navy-3); color: var(--fog); padding: 4px 8px; border-radius: 6px;
+}
+.chip b { color: #fff; }
+.chip.warn { color: var(--dusk); }
+.chip.good { color: var(--sea); }
+
+.pit {
+  font-size: 10.5px; color: var(--doldrums); border-top: 1px solid var(--navy-3);
+  padding-top: 9px; display: flex; gap: 14px; flex-wrap: wrap;
+}
+.pit b { color: var(--sky); }
+.resolved-tag {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
+  color: var(--navy); background: var(--sea); padding: 3px 9px; border-radius: 6px;
+}
+footer { margin-top: 42px; color: var(--doldrums); font-size: 12px; line-height: 1.6; }
+footer a { color: var(--ocean); text-decoration: none; }
