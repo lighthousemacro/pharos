@@ -22,6 +22,20 @@ const config: HardhatUserConfig = {
       accounts: DEPLOYER ? [DEPLOYER] : [],
     },
   },
+  // arcscan is a Blockscout explorer; it accepts any non-empty API key.
+  etherscan: {
+    apiKey: { arc: "blockscout" },
+    customChains: [
+      {
+        network: "arc",
+        chainId: 5042002,
+        urls: {
+          apiURL: "https://testnet.arcscan.app/api",
+          browserURL: "https://testnet.arcscan.app",
+        },
+      },
+    ],
+  },
 };
 
 export default config;
