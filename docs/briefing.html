@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pharos — what it is</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ocean:#2389BB; --dusk:#FF6723; --sky:#23BBFF; --sea:#00BB89;
+    --venus:#FF2389; --doldrums:#898989; --fog:#D1D1D1;
+    --navy:#0A1628; --navy2:#0F1F33; --navy3:#16273F; --line:#1f3349;
+    --ink:#E9EEF5; --mute:#9DB0C4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--navy); color:var(--ink);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.55;
+  }
+  .bar{display:flex;height:6px;width:100%;position:sticky;top:0;z-index:10}
+  .bar .o{background:var(--ocean);flex:2}.bar .d{background:var(--dusk);flex:1}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 26px 90px}
+  h1,h2,h3{font-family:Montserrat,Inter,sans-serif;letter-spacing:.01em}
+  .eyebrow{font-family:"Source Code Pro",monospace;font-size:12px;letter-spacing:.22em;
+    color:var(--ocean);text-transform:uppercase;margin-bottom:14px}
+  section{padding:54px 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:none}
+  h2{font-size:30px;font-weight:800;color:#fff;margin-bottom:8px}
+  h2 .n{color:var(--ocean);font-size:18px;vertical-align:super;margin-right:10px;
+    font-family:"Source Code Pro",monospace}
+  .lede{color:var(--mute);font-size:17px;max-width:720px;margin-bottom:30px}
+  .lede b{color:var(--fog)}
+  p{color:var(--mute);font-size:15px}
+  strong{color:var(--ink)}
+
+  /* hero */
+  .hero{padding:64px 0 50px;text-align:left}
+  .hero h1{font-size:62px;font-weight:800;letter-spacing:.16em;color:#fff;line-height:1}
+  .hero .tag{font-family:"Source Code Pro",monospace;color:var(--ocean);
+    letter-spacing:.32em;font-size:13px;margin:18px 0 26px;display:block}
+  .hero .say{font-size:23px;color:var(--ink);max-width:780px;font-weight:500}
+  .hero .say b{color:var(--sky)}
+  .hero .analogy{margin-top:18px;color:var(--doldrums);font-size:15px;font-style:italic}
+  .ten{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:36px}
+  .ten div{background:var(--navy2);border:1px solid var(--line);border-radius:12px;
+    padding:18px 18px;font-size:14.5px;color:var(--ink)}
+  .ten span{display:block;font-family:"Source Code Pro",monospace;font-size:11px;
+    letter-spacing:.14em;color:var(--ocean);margin-bottom:8px}
+
+  /* the aha comparison */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .panel{border-radius:16px;padding:26px;border:1px solid var(--line)}
+  .panel.dull{background:#0d1726}
+  .panel.live{background:linear-gradient(180deg,#0e2336,#0b1a2b);
+    border-color:var(--ocean);box-shadow:0 0 0 1px rgba(35,137,187,.25)}
+  .panel h3{font-size:14px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--doldrums);margin-bottom:18px;font-weight:700}
+  .panel.live h3{color:var(--ocean)}
+  .qrow{font-size:18px;color:#fff;font-weight:600;margin-bottom:22px}
+  .num{display:flex;align-items:baseline;gap:12px;margin:10px 0}
+  .num .lbl{width:96px;font-size:13px;color:var(--mute)}
+  .num .val{font-family:Montserrat;font-weight:800;font-size:30px}
+  .grey .val{color:var(--doldrums)}
+  .crowd .val{color:var(--dusk)} .fw .val{color:var(--ocean)}
+  .none{color:var(--doldrums);font-size:13px;margin-top:18px;font-style:italic}
+  .edgebox{margin-top:20px;background:rgba(0,187,137,.10);border:1px solid var(--sea);
+    border-radius:10px;padding:14px 16px}
+  .edgebox b{color:var(--sea);font-family:Montserrat;font-size:22px}
+  .edgebox span{color:var(--fog);font-size:13px;display:block;margin-top:3px}
+
+  /* flow diagram */
+  .flow{display:flex;flex-direction:column;gap:0;margin-top:10px}
+  .frow{display:flex;align-items:stretch;gap:16px;flex-wrap:wrap}
+  .box{background:var(--navy2);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;flex:1;min-width:180px}
+  .box .k{font-family:"Source Code Pro",monospace;font-size:11px;letter-spacing:.12em;
+    color:var(--sky);text-transform:uppercase;margin-bottom:6px}
+  .box .v{font-size:14px;color:var(--ink)}
+  .box.moat{border-color:var(--ocean);background:linear-gradient(180deg,#10283c,#0c1c2d)}
+  .box.moat .k{color:var(--ocean)}
+  .box.agent{border-style:dashed;border-color:#2f4a63}
+  .box.chain{border-color:var(--dusk)}
+  .box.chain .k{color:var(--dusk)}
+  .down{align-self:center;color:var(--doldrums);font-size:20px;margin:10px 0;
+    width:100%;text-align:center}
+  .tag-agent{display:inline-block;font-family:"Source Code Pro",monospace;font-size:10px;
+    background:#13283b;color:var(--sky);padding:2px 7px;border-radius:5px;margin-top:8px;
+    letter-spacing:.08em}
+
+  /* four pieces */
+  .four{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .pc{background:var(--navy2);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .pc h3{font-size:17px;color:#fff;margin-bottom:6px}
+  .pc .role{font-family:"Source Code Pro",monospace;font-size:11px;color:var(--ocean);
+    letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+  .pc p{font-size:14px}
+  .solv{margin-top:14px;background:#0d1726;border:1px solid var(--line);border-radius:9px;
+    padding:12px;font-family:"Source Code Pro",monospace;font-size:12px;color:var(--fog)}
+  .solv b{color:var(--sea)}
+
+  /* moat pipeline */
+  .pipe{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+  .step{display:flex;gap:18px;align-items:flex-start;background:var(--navy2);
+    border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+  .step .idx{font-family:Montserrat;font-weight:800;color:var(--ocean);font-size:20px;
+    min-width:30px}
+  .step .body{flex:1}
+  .step .t{color:#fff;font-weight:600;font-size:15px;margin-bottom:3px}
+  .step .d{color:var(--mute);font-size:13.5px}
+  .step .out{font-family:"Source Code Pro",monospace;font-size:13px;color:var(--sky);
+    white-space:nowrap;align-self:center}
+  .callout{background:rgba(255,103,35,.08);border:1px solid var(--dusk);border-radius:12px;
+    padding:20px 22px}
+  .callout h3{color:var(--dusk);font-size:16px;margin-bottom:10px}
+  .callout .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+  .callout .c{background:#0d1726;border:1px solid var(--line);border-radius:9px;padding:14px;
+    font-family:"Source Code Pro",monospace;font-size:12.5px;color:var(--fog)}
+  .callout .c.good{border-color:var(--sea)} .callout .c.good b{color:var(--sea)}
+  .callout .c.abst{border-color:var(--doldrums)} .callout .c.abst b{color:var(--doldrums)}
+
+  /* gauge */
+  .gauge{background:var(--navy2);border:1px solid var(--line);border-radius:14px;
+    padding:30px 34px}
+  .gauge .q{color:#fff;font-weight:600;font-size:16px;margin-bottom:34px}
+  .track{position:relative;height:10px;background:var(--navy3);border-radius:6px;margin:54px 0 50px}
+  .pin{position:absolute;top:-7px;transform:translateX(-50%);text-align:center}
+  .pin .stem{width:3px;height:24px;margin:0 auto;border-radius:2px}
+  .pin .cap{font-size:12px;font-weight:700;margin-top:8px;white-space:nowrap;
+    font-family:"Source Code Pro",monospace}
+  .pin.c .stem{background:var(--dusk)} .pin.c .cap{color:var(--dusk)}
+  .pin.f{top:auto;bottom:-7px}
+  .pin.f .stem{background:var(--ocean)} .pin.f .cap{color:var(--ocean);margin-top:0;margin-bottom:8px}
+  .pin.f .cap{order:-1}
+  .pin.f{display:flex;flex-direction:column}
+  .scale{display:flex;justify-content:space-between;font-size:11px;color:var(--doldrums);
+    font-family:"Source Code Pro",monospace;margin-top:-38px}
+  .gedge{display:flex;align-items:center;gap:16px;margin-top:30px;
+    border-top:1px solid var(--line);padding-top:22px}
+  .gedge .big{font-family:Montserrat;font-weight:800;font-size:32px;color:var(--sea)}
+  .gedge .cap{color:var(--mute);font-size:14px}
+  .why{font-family:"Source Code Pro",monospace;font-size:12px;color:var(--doldrums);
+    margin-top:16px;line-height:1.7}
+
+  /* status table */
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14.5px}
+  th{text-align:left;color:var(--doldrums);font-weight:600;font-size:12px;
+    text-transform:uppercase;letter-spacing:.1em;padding:10px 12px;border-bottom:1px solid var(--line)}
+  td{padding:13px 12px;border-bottom:1px solid var(--line);color:var(--ink)}
+  td .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:9px}
+  .ok{background:var(--sea)} .partial{background:var(--dusk)} .todo{background:var(--doldrums)}
+  td.s{color:var(--mute);font-size:13px}
+
+  /* steps story */
+  .story{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .story .s{background:var(--navy2);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .story .s .n{font-family:Montserrat;font-weight:800;color:var(--ocean);font-size:24px;
+    margin-bottom:8px}
+  .story .s p{font-size:13.5px}
+
+  /* faq */
+  .faq{display:flex;flex-direction:column;gap:12px}
+  .qa{background:var(--navy2);border:1px solid var(--line);border-radius:12px;padding:18px 22px}
+  .qa .q{color:#fff;font-weight:600;font-size:15px;margin-bottom:7px}
+  .qa .q::before{content:"Q  ";color:var(--dusk);font-family:"Source Code Pro",monospace}
+  .qa .a{color:var(--mute);font-size:14px}
+  .qa .a::before{content:"A  ";color:var(--sea);font-family:"Source Code Pro",monospace}
+
+  .decide{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .decide .d{background:var(--navy2);border:1px solid var(--line);border-left:3px solid var(--dusk);
+    border-radius:10px;padding:18px}
+  .decide .d h3{font-size:15px;color:#fff;margin-bottom:6px}
+  .decide .d p{font-size:13px}
+
+  footer{border-top:1px solid var(--line);padding:30px 0 0;margin-top:50px;
+    color:var(--doldrums);font-size:13px}
+  footer a{color:var(--ocean);text-decoration:none}
+  footer .dl{color:var(--venus);font-family:"Source Code Pro",monospace}
+  @media(max-width:780px){
+    .vs,.four,.ten,.story,.decide,.callout .grid2{grid-template-columns:1fr}
+    .hero h1{font-size:42px}
+  }
+</style>
+</head>
+<body>
+<div class="bar"><div class="o"></div><div class="d"></div></div>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>PHAROS</h1>
+    <span class="tag">MACRO, ILLUMINATED.</span>
+    <div class="say">
+      A betting market on economic data where <b>your research desk sets the
+      line</b> and the crowd bets against it. Settled in dollars, on Arc, run
+      entirely by agents.
+    </div>
+    <div class="analogy">
+      Think a sharp sportsbook, but the sport is CPI, payrolls, GDP and the Fed,
+      and the model setting the opening line is the Lighthouse framework.
+    </div>
+    <div class="ten">
+      <div><span>WHAT</span>A prediction market for macro prints. Yes or no:
+        will CPI run hot, will payrolls beat, will the Fed cut.</div>
+      <div><span>THE TWIST</span>On every contract the framework posts its own
+        probability next to the crowd's. The gap is the product.</div>
+      <div><span>HOW</span>Agents open the markets, price them, and resolve
+        them on the official number. No human in the loop.</div>
+    </div>
+  </header>
+
+  <section>
+    <div class="eyebrow">The one thing to get</div>
+    <h2>Everyone else shows one number. We show two.</h2>
+    <p class="lede">This is the entire idea. If this lands, the rest is detail.</p>
+    <div class="vs">
+      <div class="panel dull">
+        <h3>Polymarket / Kalshi</h3>
+        <div class="qrow">Will CPI run hot?</div>
+        <div class="num grey"><span class="lbl">crowd</span>
+          <span class="val">61%</span></div>
+        <div class="none">One number. No model, no anchor, no research.
+          A thermometer with no zero point.</div>
+      </div>
+      <div class="panel live">
+        <h3>Pharos</h3>
+        <div class="qrow">Will CPI run hot?</div>
+        <div class="num crowd"><span class="lbl">crowd</span>
+          <span class="val">61%</span></div>
+        <div class="num fw"><span class="lbl">framework</span>
+          <span class="val">83%</span></div>
+        <div class="edgebox"><b>+22pp edge</b>
+          <span>the framework says the crowd has this too low</span></div>
+      </div>
+    </div>
+    <p style="margin-top:24px">You already built the zero point. The 12
+      pillars, the composites, the 2,500-series database. It has never been
+      pointed at a market that needs exactly it. <strong>That edge number is
+      why a trader opens our app instead of Polymarket.</strong></p>
+  </section>
+
+  <section>
+    <h2><span class="n">01</span>How the whole thing works</h2>
+    <p class="lede">Four pieces. Three of them are the agents the hackathon is
+      judging. Read top to bottom.</p>
+    <div class="flow">
+      <div class="frow">
+        <div class="box"><div class="k">Lighthouse_Master.db</div>
+          <div class="v">Your live database, 2,500 series. Read-only,
+            untouched.</div></div>
+      </div>
+      <div class="down">▼</div>
+      <div class="frow">
+        <div class="box moat"><div class="k">Pricing engine — THE MOAT</div>
+          <div class="v">Turns the pillars into a probability for
+            "CPI &ge; 3.0%". Point-in-time, no look-ahead. Serves it over a
+            tiny API.</div></div>
+      </div>
+      <div class="down">▼</div>
+      <div class="frow">
+        <div class="box agent"><div class="k">Market-creator</div>
+          <div class="v">Reads the econ calendar. Opens and seeds a market
+            two weeks before each release, posts our price.</div>
+          <span class="tag-agent">AGENT 1</span></div>
+        <div class="box chain"><div class="k">Pharos market — on Arc</div>
+          <div class="v">A smart contract that holds the USDC, runs the
+            crowd odds, and pays winners.</div></div>
+        <div class="box agent"><div class="k">Oracle</div>
+          <div class="v">After the print drops, pulls the official number
+            and resolves the market.</div>
+          <span class="tag-agent">AGENT 2</span></div>
+      </div>
+      <div class="down">▼</div>
+      <div class="frow">
+        <div class="box"><div class="k">Web app</div>
+          <div class="v">The dashboard people see: crowd price vs framework
+            price, the edge, the reasoning.</div></div>
+      </div>
+    </div>
+    <p style="margin-top:22px">In one line: <strong>data &rarr; price &rarr;
+      open market &rarr; people bet &rarr; official print &rarr; resolve &rarr;
+      pay.</strong> Agents do every step. A third agent (the runner) conducts
+      them.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">02</span>The four pieces, plainly</h2>
+    <div class="four">
+      <div class="pc">
+        <h3>The market</h3>
+        <div class="role">the venue, on Arc</div>
+        <p>A program on a blockchain that holds money. An automated bookmaker
+          for one yes/no question. It escrows USDC, quotes odds that move as
+          money comes in (the "crowd price"), and pays each winning share
+          exactly 1 USDC.</p>
+        <div class="solv">
+          1 USDC in &rarr; mints 1 YES + 1 NO<br>
+          exactly one side wins, pays 1 USDC<br>
+          &rArr; <b>payout == collateral. always.</b> it cannot go bust.
+        </div>
+      </div>
+      <div class="pc">
+        <h3>The pricing engine</h3>
+        <div class="role">the moat</div>
+        <p>The only hard-to-copy piece, and the reason to do this. It reads
+          your DB and answers one question per market: what is the probability
+          this print clears this number. Your research desk, turned into an
+          automated line-setter. Detail in section 03.</p>
+      </div>
+      <div class="pc">
+        <h3>The agents</h3>
+        <div class="role">what the hackathon judges</div>
+        <p>Three small autonomous programs, no human runs them. One opens and
+          prices markets ahead of each release. One resolves them on the
+          official government number. One conducts the other two.</p>
+      </div>
+      <div class="pc">
+        <h3>The front-end</h3>
+        <div class="role">what people see</div>
+        <p>A dashboard in your 23/89/BB palette. Each market is a card with one
+          gauge showing both prices, the edge, the framework's reasoning, and
+          the signal-quality readout.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">03</span>The moat, in detail</h2>
+    <p class="lede">How <b>"US headline CPI trend &ge; 3.0%"</b> gets its
+      framework probability. Real numbers from your DB.</p>
+    <div class="pipe">
+      <div class="step"><div class="idx">1</div><div class="body">
+        <div class="t">Point-in-time slice</div>
+        <div class="d">Only data that was public on the day the market opened.
+          Publication-lagged. This is your backtest discipline, enforced.</div>
+      </div><div class="out">no look-ahead</div></div>
+      <div class="step"><div class="idx">2</div><div class="body">
+        <div class="t">Consistent trend nowcast</div>
+        <div class="d">Blend of 3m/3m and 6m/6m seasonally-adjusted annualized
+          rates. Not a single noisy print, a de-noised trend.</div>
+      </div><div class="out">&mu; &asymp; 5.30%</div></div>
+      <div class="step"><div class="idx">3</div><div class="body">
+        <div class="t">Pillar signal</div>
+        <div class="d">Inflation Heat, normalized into a clean sequential
+          z-score using only past information.</div>
+      </div><div class="out">+0.02&sigma;</div></div>
+      <div class="step"><div class="idx">4</div><div class="body">
+        <div class="t">Calibration</div>
+        <div class="d">How well has this pillar actually predicted this print,
+          historically? Fit on aligned history, not hand-picked.</div>
+      </div><div class="out">IC +0.30 · n=241</div></div>
+      <div class="step"><div class="idx">5</div><div class="body">
+        <div class="t">Conviction shrink</div>
+        <div class="d">Trust the tilt in proportion to proven skill. Strong
+          edge, full conviction. Weak edge, pull back toward 50%.</div>
+      </div><div class="out">&rarr; 83.2% YES</div></div>
+    </div>
+    <div class="callout">
+      <h3>The part that makes it credible: it knows when it does not know</h3>
+      <p style="color:var(--fog);font-size:14px">The conviction shrink is your
+        own position sizing (Base &times; Conviction &times; Regime) applied to
+        the model itself. It only expresses a strong view when the history
+        earns it. Watch it, live:</p>
+      <div class="grid2">
+        <div class="c good">CPI / Inflation Heat<br>IC +0.30 &rarr;
+          conviction 1.00 &rarr; <b>83.2%</b> &nbsp;committed</div>
+        <div class="c abst">GDP / Activity Pulse<br>IC +0.01 &rarr;
+          conviction 0.04 &rarr; <b>50.5%</b> &nbsp;abstains</div>
+      </div>
+      <p style="margin-top:14px;font-size:13.5px">The GDP market is the proof
+        it is honest. That pillar has no demonstrated edge on that print, so
+        the model refuses to fake a view. <strong>A model that abstains when
+        it lacks an edge is the credible one.</strong> That single behavior is
+        the answer to "is this real or hand-waved."</p>
+    </div>
+    <p style="margin-top:22px;font-size:13.5px;color:var(--doldrums)">
+      Methodology lineage: point-in-time information states, consistent trends,
+      zn-scores and signal-return calibration come from the Macrosynergy /
+      JPMaQS quantamental tradition. Those documents are proprietary and
+      confidential, so the concepts (also public in their free Academy) are
+      applied to <strong>your</strong> data and framework. No Macrosynergy
+      text, tickers, dataset or package is in the repo. We can say
+      "quantamental tradition." We cannot say "powered by JPMaQS," and we are
+      not.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">04</span>The dual price — the actual product</h2>
+    <p class="lede">One gauge, two pins. This is the screen.</p>
+    <div class="gauge">
+      <div class="q">US headline CPI trend for May 2026 &nbsp;&ge;&nbsp; 3.00%
+        (3m/6m saar)</div>
+      <div class="track">
+        <div class="pin c" style="left:61%"><div class="stem"></div>
+          <div class="cap">crowd 61%</div></div>
+        <div class="pin f" style="left:83%"><div class="cap">framework 83%</div>
+          <div class="stem"></div></div>
+      </div>
+      <div class="scale"><span>0%</span><span>50%</span><span>100%</span></div>
+      <div class="gedge">
+        <div class="big">+22pp</div>
+        <div class="cap">framework sees YES underpriced by the crowd</div>
+      </div>
+      <div class="why">why: consistent trend nowcast 5.30% vs 3.00% strike ·
+        Inflation Heat +0.02&sigma; · IC +0.30 · n=241 · conviction 1.00<br>
+        point-in-time 2026-05-16 · pub-lag 41d · grading 2.25</div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">05</span>What is real vs. scaffolded</h2>
+    <p class="lede">No spin. This is the honest state today, day 1 of the
+      sprint.</p>
+    <table>
+      <tr><th>Piece</th><th>State</th><th>Read</th></tr>
+      <tr><td><span class="dot ok"></span>Smart contracts</td><td>Done</td>
+        <td class="s">compile, 6/6 tests, solvency proven</td></tr>
+      <tr><td><span class="dot ok"></span>Pricing engine (moat)</td><td>Done</td>
+        <td class="s">runs on the live DB, methodology validated</td></tr>
+      <tr><td><span class="dot ok"></span>Agents</td><td>Done</td>
+        <td class="s">full end-to-end on a local chain</td></tr>
+      <tr><td><span class="dot ok"></span>API + web UI</td><td>Done</td>
+        <td class="s">builds, serves live data, brand-themed</td></tr>
+      <tr><td><span class="dot ok"></span>End-to-end demo</td><td>Done</td>
+        <td class="s"><code>make demo</code> runs the whole story</td></tr>
+      <tr><td><span class="dot partial"></span>Deploy to Arc testnet</td>
+        <td>Scripted</td><td class="s">needs the Arc RPC + a key. config, not
+        building</td></tr>
+      <tr><td><span class="dot todo"></span>Click-to-bet UI</td><td>Next</td>
+        <td class="s">dashboard reads the chain, the bet flow is the next
+        slice</td></tr>
+      <tr><td><span class="dot partial"></span>2026 calendar dates</td>
+        <td>Flagged</td><td class="s">from public BLS/BEA/Fed schedules,
+        "verify before mainnet"</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2><span class="n">06</span>The demo, as a story</h2>
+    <p class="lede"><code>make demo</code>, about 90 seconds, throwaway local
+      chain, real prices from your live DB.</p>
+    <div class="story">
+      <div class="s"><div class="n">1</div><p>The creator agent opens
+        <strong>6 markets</strong> for the 2026 calendar, each seeded at the
+        framework's point-in-time fair value.</p></div>
+      <div class="s"><div class="n">2</div><p>A simulated crowd piles into NFP
+        on NO. The crowd price craters 50% &rarr; 13%. The framework holds 46%.
+        <strong>A +33pp edge opens, on chain.</strong></p></div>
+      <div class="s"><div class="n">3</div><p>A market hits its release. The
+        oracle pulls the real CPI figure (6.2% vs a 3.0% strike) and resolves
+        it <strong>YES</strong>.</p></div>
+      <div class="s"><div class="n">4</div><p>Winners are paid in USDC. The
+        book shows RESOLVED, everyone settled, the contract at zero.</p></div>
+    </div>
+    <p style="margin-top:22px">The entire thesis, demonstrated, not
+      described.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">07</span>Decisions that need you</h2>
+    <div class="decide">
+      <div class="d"><h3>The name</h3><p>"Pharos" is the Lighthouse of
+        Alexandria. Ties to Lighthouse Macro, no collision with The
+        Beacon / Beam / Horizon. Centralized in code, rename is find/replace.
+        Keep or change.</p></div>
+      <div class="d"><h3>Brand tie</h3><p>Right now it wears your palette and
+        "MACRO, ILLUMINATED." Sub-brand of Lighthouse, or standalone. Branding
+        call, not a code call.</p></div>
+      <div class="d"><h3>Deploy now?</h3><p>Push to the real Arc testnet now,
+        or keep proving locally until closer to the May 25 submission. Needs
+        the Arc RPC and a burner key.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">08</span>The hard questions, and the answers</h2>
+    <div class="faq">
+      <div class="qa"><div class="q">Isn't this just Polymarket?</div>
+        <div class="a">No. They are a venue with no price. We are a venue with
+          a model. The contract is a commodity. The price is the product.</div></div>
+      <div class="qa"><div class="q">Can't a team fork your contracts?</div>
+        <div class="a">Yes, in an afternoon, and it gets them nothing. The moat
+          is the framework and the data behind the quote, not the AMM.</div></div>
+      <div class="qa"><div class="q">Is the model real or hand-waved?</div>
+        <div class="a">Real, and it abstains when it lacks an edge. Show the
+          GDP market shrinking to 50%. A model that knows when it does not know
+          is the credible one.</div></div>
+      <div class="qa"><div class="q">Who resolves it?</div>
+        <div class="a">An agent, on official BLS/BEA/Fed data, using the same
+          calculation it priced with. Not a human opinion.</div></div>
+      <div class="qa"><div class="q">Why Arc specifically?</div>
+        <div class="a">USDC-denominated gas (no buying a separate gas token),
+          instant USDC settlement, and an encrypted mempool so a large macro
+          bet does not leak its intent. The last one is the institutional
+          wedge.</div></div>
+      <div class="qa"><div class="q">Can it rug or go insolvent?</div>
+        <div class="a">No. Every dollar in mints one YES and one NO, exactly
+          one side wins, payout equals collateral by construction. Proven in
+          tests.</div></div>
+      <div class="qa"><div class="q">Where do users come from?</div>
+        <div class="a">Your existing audience already argues about these exact
+          prints weekly. The market is the call to action under the research,
+          and every resolved market is a content unit.</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <strong style="color:var(--ink)">Run it:</strong>
+    <span style="font-family:'Source Code Pro',monospace;color:var(--fog)">
+    &nbsp;cd Projects/pharos &nbsp;·&nbsp; make price &nbsp;·&nbsp; make test
+    &nbsp;·&nbsp; make demo</span>
+    <br><br>
+    Submission deadline <span class="dl">May 25, 2026</span> · today is day 1
+    of the sprint · build is already end-to-end demoable, remaining work is
+    deploy, the bet UI, polish and the pitch video.
+    <br><br>
+    <a href="https://lighthousemacro.com">Lighthouse Macro</a> ·
+    <a href="https://research.lighthousemacro.com">Research</a> ·
+    <a href="https://x.com/LHMacro">@LHMacro</a>
+  </footer>
+
+</div>
+</body>
+</html>
