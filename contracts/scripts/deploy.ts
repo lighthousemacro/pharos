@@ -11,10 +11,20 @@ async function main() {
   const deployerAddr = await deployer.getAddress();
   console.log(`Deployer: ${deployerAddr}  (network: ${network.name})`);
 
-  const USDC = await ethers.getContractFactory("MockUSDC");
-  const usdc = await USDC.deploy();
-  await usdc.waitForDeployment();
-  const usdcAddr = await usdc.getAddress();
+  // On Arc, point at the canonical native USDC ERC-20 (6dp) at
+  // 0x3600...0000. Locally, deploy a MockUSDC stand-in.
+  const realUsdc = process.env.PHAROS_USDC;
+  let usdc: any = null;
+  let usdcAddr: string;
+  if (realUsdc) {
+    usdcAddr = realUsdc;
+    console.log(`USDC (Arc native ERC-20): ${usdcAddr}`);
+  } else {
+    const USDC = await ethers.getContractFactory("MockUSDC");
+    usdc = await USDC.deploy();
+    await usdc.waitForDeployment();
+    usdcAddr = await usdc.getAddress();
+  }
 
   const Factory = await ethers.getContractFactory("PharosFactory");
   // resolver + pricingOracle = deployer for the demo; in prod these are the
@@ -23,11 +33,14 @@ async function main() {
   await factory.waitForDeployment();
   const factoryAddr = await factory.getAddress();
 
-  // Demo float: 5,000,000 USDC to the deployer (seeding + simulated traders).
-  const mintAmount = 5_000_000n * 10n ** 6n;
-  await (await usdc.mint(deployerAddr, mintAmount)).wait();
+  // Demo float only for the MockUSDC stand-in. Real Arc USDC comes from
+  // the Circle faucet, never a mint.
+  if (usdc) {
+    const mintAmount = 5_000_000n * 10n ** 6n;
+    await (await usdc.mint(deployerAddr, mintAmount)).wait();
+  }
 
-  console.log(`MockUSDC:      ${usdcAddr}`);
+  console.log(`USDC:          ${usdcAddr}`);
   console.log(`PharosFactory: ${factoryAddr}`);
 
   const root = path.resolve(__dirname, "..", "..");
