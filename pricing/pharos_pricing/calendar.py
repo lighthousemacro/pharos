@@ -64,12 +64,13 @@ MARKET_KINDS: dict[str, MarketKind] = {
         kind="GDP",
         label="US Real GDP (annualized q/q)",
         series_id="A191RL1Q225SBEA",
-        # Capex Thrust + Consumer Pulse both lead GDP. The original single
-        # Activity Pulse (GCI) wiring had ~no demonstrated edge (IC +0.07);
-        # the BCI+CCI composite holds out of sample (IC +0.20, holdout +0.44,
-        # bal-acc 0.61). Equal-weight zn composite — see research/EDGE_FINDINGS.md.
-        pillar_index="BCI+CCI",      # Capex Thrust + Consumer Pulse
-        pillar_combo=("BCI", "CCI"),
+        # Activity Pulse (rebuilt Concurrent Activity Tracker) + Capex Thrust
+        # both lead GDP. The original single GCI wiring had ~no edge because
+        # GCI had lost its history in the DB; with GCI backfilled, the GCI+BCI
+        # composite is the strongest OOS performer (IC +0.30, holdout +0.59,
+        # full conviction). Equal-weight zn composite — see EDGE_FINDINGS.md.
+        pillar_index="GCI+BCI",      # Activity Pulse + Capex Thrust
+        pillar_combo=("GCI", "BCI"),
         pillar_sign=+1.0,
         transform="gdp_trend",
         unit="% saar",

@@ -65,22 +65,22 @@ export const BOARD: Market[] = [
     "strike": 2.0,
     "strike_scaled": 2000000,
     "unit": "% saar",
-    "framework_prob": 0.4799,
-    "framework_prob_bps": 4799,
-    "nowcast": 1.8663,
-    "sigma": 2.0597,
+    "framework_prob": 0.557,
+    "framework_prob_bps": 5570,
+    "nowcast": 2.2898,
+    "sigma": 2.0004,
     "pillar": {
-      "index": "BCI+CCI",
-      "zn_score": -0.276
+      "index": "GCI+BCI",
+      "zn_score": 0.885
     },
     "signal_quality": {
-      "beta": 0.5955,
-      "resid_std": 2.0597,
-      "ic": 0.197,
-      "bal_accuracy": 0.608,
-      "hit_rate": 0.614,
-      "n": 103,
-      "shrink": 0.655
+      "beta": 0.7852,
+      "resid_std": 2.0004,
+      "ic": 0.295,
+      "bal_accuracy": 0.583,
+      "hit_rate": 0.583,
+      "n": 104,
+      "shrink": 0.984
     },
     "information_state": {
       "as_of": "2026-05-22",
@@ -90,16 +90,16 @@ export const BOARD: Market[] = [
       "inputs": {
         "A191RL1Q225SBEA": 2.0,
         "A191RL1Q225SBEA_asof": "2026-01-01",
-        "BCI": 0.1307,
-        "CCI": -0.7098
+        "GCI": 2.1273,
+        "BCI": 0.1307
       }
     },
-    "reasoning": "Consistent trend nowcast 1.87 % saar vs strike 2.00. BCI+CCI at -0.28 sigma (IC +0.20, bal-acc 0.61, n=103). Conviction 0.78 -> framework 48.0% YES.",
+    "reasoning": "Consistent trend nowcast 2.29 % saar vs strike 2.00. GCI+BCI at +0.89 sigma (IC +0.30, bal-acc 0.58, n=104). Conviction 0.99 -> framework 55.7% YES.",
     "market_key": "GDP:Q1 2026 (2nd)",
     "resolve_dt": "2026-05-28T13:30:00",
     "tier": "signal",
-    "conviction": "moderate",
-    "tier_note": "Capex Thrust + Consumer Pulse, calibrated and out-of-sample checked (IC +0.20, holds OOS). Moderate conviction.",
+    "conviction": "high",
+    "tier_note": "Activity Pulse + Capex Thrust, calibrated and out-of-sample checked (IC +0.30, holdout +0.59). Full conviction.",
     "crowd_prob": 0.5,
     "on_chain": true,
     "framework_on_chain": true,

@@ -9,6 +9,7 @@ const NAMES: Record<string, string> = {
   CCI: "Consumer Pulse (CCI)",
   MRI: "Macro Risk Index (MRI)",
   "BCI+CCI": "Capex Thrust + Consumer Pulse",
+  "GCI+BCI": "Activity Pulse + Capex Thrust",
 };
 
 export function pillarName(id: string): string {
