@@ -1,0 +1,13 @@
+{
+  "network": "arc",
+  "chainId": 5042002,
+  "deployer": "0xc432c97c5d1927cD75c7A166de6619E35aB4EdBF",
+  "usdc": "0x3600000000000000000000000000000000000000",
+  "factory": "0xfA2D29c4bEd132009D029308810240863c1B3Cc9",
+  "roles": {
+    "owner": "0xc432c97c5d1927cD75c7A166de6619E35aB4EdBF",
+    "resolver": "0xc432c97c5d1927cD75c7A166de6619E35aB4EdBF",
+    "pricingOracle": "0xc432c97c5d1927cD75c7A166de6619E35aB4EdBF"
+  },
+  "createdAt": "2026-05-17T05:36:18.154Z"
+}

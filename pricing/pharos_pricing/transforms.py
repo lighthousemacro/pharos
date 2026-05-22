@@ -166,9 +166,13 @@ def calibrate_signal(
     resid_std = float(np.std(resid, ddof=1)) or float(np.std(y, ddof=1))
     ic = float(np.corrcoef(x, y)[0, 1])
 
-    # Directional / balanced accuracy of sign(signal) vs sign(demeaned y).
+    # Directional accuracy must respect the FITTED sign of the
+    # relationship. An inverse signal (ic < 0) is still predictive — score
+    # it on its oriented direction, not its raw sign, or a good negative
+    # pillar (labor fragility -> payrolls) reads as a coin-flip loser.
+    sgn = -1.0 if ic < 0 else 1.0
     y_dir = np.sign(y - np.median(y))
-    x_dir = np.sign(x - np.median(x))
+    x_dir = np.sign(x - np.median(x)) * sgn
     mask = (y_dir != 0) & (x_dir != 0)
     hit_rate = float(np.mean(x_dir[mask] == y_dir[mask])) if mask.any() else 0.5
     pos = y_dir > 0

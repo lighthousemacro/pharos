@@ -26,12 +26,13 @@ class MarketKind:
     kind: str
     label: str
     series_id: str          # observations series the outcome resolves on
-    pillar_index: str       # lighthouse_indices composite used as the tilt
+    pillar_index: str       # display label for the tilt (single id or "A+B")
     pillar_sign: float      # +1 if high pillar -> higher outcome, else -1
     transform: str          # "cpi_trend" | "nfp_trend" | "gdp_trend" | "policy"
     unit: str               # human unit for the strike
     default_strike: float   # sensible demo strike in human units
     question_tmpl: str
+    pillar_combo: tuple[str, ...] = ()  # >1 lighthouse_indices id -> equal-weight zn composite
 
 
 # The four demo verticals. CPI / NFP / GDP resolve on official BLS/BEA
@@ -63,7 +64,12 @@ MARKET_KINDS: dict[str, MarketKind] = {
         kind="GDP",
         label="US Real GDP (annualized q/q)",
         series_id="A191RL1Q225SBEA",
-        pillar_index="GCI",          # Activity Pulse
+        # Capex Thrust + Consumer Pulse both lead GDP. The original single
+        # Activity Pulse (GCI) wiring had ~no demonstrated edge (IC +0.07);
+        # the BCI+CCI composite holds out of sample (IC +0.20, holdout +0.44,
+        # bal-acc 0.61). Equal-weight zn composite — see research/EDGE_FINDINGS.md.
+        pillar_index="BCI+CCI",      # Capex Thrust + Consumer Pulse
+        pillar_combo=("BCI", "CCI"),
         pillar_sign=+1.0,
         transform="gdp_trend",
         unit="% saar",

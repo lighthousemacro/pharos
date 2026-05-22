@@ -49,6 +49,51 @@ def _target_trend(mk: cal.MarketKind, level_pit: pd.Series) -> pd.Series:
     raise ValueError(f"no trend for transform {mk.transform}")
 
 
+def _combined_zn(pillar_ids, as_of: pd.Timestamp):
+    """Equal-weight, point-in-time zn composite of one or more pillars.
+
+    Each pillar is resampled to monthly, sequentially zn-scored on its own
+    history, then averaged across the common dates ("conceptual parity"
+    combination). A market can therefore be tilted by a single pillar or a
+    multi-pillar composite (e.g. GDP = Capex Thrust + Consumer Pulse, which
+    holds out of sample where the single Activity Pulse wiring did not).
+    Returns (composite zn series, {pillar: latest value}).
+    """
+    zns: list[pd.Series] = []
+    latest: dict[str, float] = {}
+    for pid in pillar_ids:
+        try:
+            s = db.index_series(pid)
+        except KeyError:
+            continue
+        s = s[s.index <= as_of].resample("MS").last().dropna()
+        if s.empty:
+            continue
+        latest[pid] = float(s.iloc[-1])
+        z = zn_score(s, neutral=0.0, min_obs=24)
+        if not z.empty:
+            zns.append(z.rename(pid))
+    if not zns:
+        return pd.Series(dtype=float), latest
+    composite = pd.concat(zns, axis=1).dropna().mean(axis=1)
+    return composite, latest
+
+
+def _calib_target(mk: cal.MarketKind, level: pd.Series, trend: pd.Series) -> pd.Series:
+    """Realized-outcome series the pillar signal is calibrated against.
+
+    For GDP the validated construction is a 3-quarter consistent smooth of the
+    point-in-time annualized rate — sparse quarterly prints, denoised so the
+    signal-return fit is stable (research/EDGE_FINDINGS.md). Other markets
+    calibrate against the monthly consistent trend used for the nowcast.
+    """
+    if mk.transform == "gdp_trend":
+        return (
+            level.resample("MS").last().dropna().rolling(3, min_periods=1).mean().dropna()
+        )
+    return trend.resample("MS").last()
+
+
 def _price_data_market(
     mk: cal.MarketKind, strike: float, as_of: pd.Timestamp, ref_label: str
 ) -> dict:
@@ -64,16 +109,15 @@ def _price_data_market(
         raise ValueError(f"could not build trend for {mk.kind}")
     mu_trend = float(trend.iloc[-1])
 
-    # 2. Pillar signal — sequential zn-score, point-in-time.
-    pillar = db.index_series(mk.pillar_index)
-    pillar_pit = pillar[pillar.index <= as_of]
-    # Resample the (daily) composite to the trend's monthly cadence.
-    pillar_m = pillar_pit.resample("MS").last().dropna()
-    zn = zn_score(pillar_m, neutral=0.0, min_obs=24)
+    # 2. Pillar signal — point-in-time sequential zn-score. A market may be
+    #    tilted by a single pillar or an equal-weight composite of several
+    #    (GDP = Capex Thrust + Consumer Pulse).
+    pillar_ids = mk.pillar_combo or (mk.pillar_index,)
+    zn, pillar_latest = _combined_zn(pillar_ids, as_of)
     zn_latest = float(zn.iloc[-1]) if not zn.empty else 0.0
 
-    # 3. Calibrate pillar -> outcome on aligned monthly history.
-    calib: Calibration = calibrate_signal(zn, trend.resample("MS").last())
+    # 3. Calibrate the (composite) signal -> outcome on aligned history.
+    calib: Calibration = calibrate_signal(zn, _calib_target(mk, level, trend))
 
     # 4. Framework nowcast = blend of the consistent trend and the
     #    calibrated prediction E[outcome | pillar]. If the pillar has no
@@ -104,7 +148,7 @@ def _price_data_market(
         inputs={
             mk.series_id: round(float(level.iloc[-1]), 4),
             f"{mk.series_id}_asof": level.index[-1].strftime("%Y-%m-%d"),
-            mk.pillar_index: round(float(pillar_m.iloc[-1]), 4),
+            **{pid: round(v, 4) for pid, v in pillar_latest.items()},
         },
     )
 
