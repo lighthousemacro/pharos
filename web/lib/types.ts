@@ -28,6 +28,7 @@ export interface Market {
   ref_label: string;
   question: string;
   strike: number;
+  strike_scaled?: number;
   unit: string;
   framework_prob: number;
   framework_prob_bps: number;

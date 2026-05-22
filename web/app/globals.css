@@ -288,6 +288,8 @@ footer .meth { max-width: 80ch; }
 .bet { border-top: 1px solid var(--line); padding-top: 13px; margin-top: 4px; display: flex; flex-direction: column; gap: 9px; }
 .bet-connect { background: var(--ocean); color: #fff; border: 0; border-radius: var(--r-sm); padding: 11px 16px; font-weight: 700; font-size: 13.5px; cursor: pointer; transition: background .15s; }
 .bet-connect:hover { background: var(--ocean-dim); }
+.bet-link { display: block; text-align: center; background: var(--ocean); color: #fff; border-radius: var(--r-sm); padding: 11px 16px; font-weight: 700; font-size: 13.5px; text-decoration: none; transition: background .15s; }
+.bet-link:hover { background: var(--ocean-dim); color: #fff; }
 .bet-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .bet-amt { width: 84px; background: var(--navy); color: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 8px; font-size: 13px; }
 .bet-unit { font-size: 12px; color: var(--doldrums); margin-right: 2px; }

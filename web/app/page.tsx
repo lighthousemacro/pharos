@@ -1,63 +1,12 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import MarketCard from "@/components/MarketCard";
 import FlagshipSpread from "@/components/FlagshipSpread";
-import { MarketsResponse, Market } from "@/lib/types";
-import { normQuestion, type OnchainMarket } from "@/lib/chain";
+import { BOARD, SNAPSHOT_AS_OF, FACTORY, ARCSCAN } from "@/lib/snapshot";
 
 const GITHUB = "https://github.com/lighthousemacro/pharos";
 
 export default function Home() {
-  const [data, setData] = useState<MarketsResponse | null>(null);
-  const [chainLive, setChainLive] = useState(false);
-
-  useEffect(() => {
-    let alive = true;
-    const load = async () => {
-      try {
-        const r = await fetch("/api/markets");
-        const d: MarketsResponse = await r.json();
-        try {
-          const cr = await fetch("/api/chain");
-          const cj = await cr.json();
-          if (cj.error) throw new Error(cj.error);
-          const oc: OnchainMarket[] = cj.rows ?? [];
-          const idx = new Map(oc.map((r) => [normQuestion(r.question), r] as const));
-          d.markets = d.markets.map((m: Market) => {
-            const hit = idx.get(normQuestion(m.question));
-            return hit
-              ? {
-                  ...m,
-                  crowd_prob: hit.crowdProb,
-                  market_address: hit.address,
-                  on_chain: true,
-                  framework_on_chain: typeof hit.frameworkProb === "number",
-                  resolved: hit.resolved,
-                  resolve_time: hit.resolveTime,
-                }
-              : m;
-          });
-          if (alive) setChainLive(oc.length > 0);
-        } catch {
-          if (alive) setChainLive(false);
-        }
-        if (alive) setData(d);
-      } catch {
-        /* keep last good state */
-      }
-    };
-    load();
-    const t = setInterval(load, 15000);
-    return () => {
-      alive = false;
-      clearInterval(t);
-    };
-  }, []);
-
-  const markets = data?.markets ?? [];
-  const flagship = markets.find((m) => m.tier === "edge") ?? markets[0];
-  const board = markets.filter((m) => m !== flagship);
+  const flagship = BOARD.find((m) => m.tier === "edge") ?? BOARD[0];
+  const board = BOARD.filter((m) => m !== flagship);
 
   return (
     <main>
@@ -124,13 +73,7 @@ export default function Home() {
         {/* flagship */}
         <section className="band">
           <div className="kicker">The spread, live</div>
-          {flagship ? (
-            <FlagshipSpread m={flagship} />
-          ) : (
-            <div className="flagship">
-              <div className="resolves">loading the framework price…</div>
-            </div>
-          )}
+          <FlagshipSpread m={flagship} />
         </section>
 
         {/* value props */}
@@ -177,22 +120,18 @@ export default function Home() {
           </div>
           <div className="grid">
             {board.map((m, i) => (
-              <MarketCard key={m.market_address ?? m.market_key ?? `${m.kind}-${i}`} m={m} />
+              <MarketCard key={m.market_address ?? `${m.kind}-${i}`} m={m} />
             ))}
           </div>
-          {data && (
-            <div style={{ marginTop: 16 }}>
-              <span className={`banner ${data.source === "live" ? "" : "sample"}`}>
-                <span className="dot" />
-                {data.source === "live" ? (
-                  <>framework <b>live</b> on Lighthouse_Master.db</>
-                ) : (
-                  <>framework <b>snapshot {data.as_of}</b></>
-                )}
-                {chainLive ? <>&nbsp;· crowd prices <b>live on Arc</b></> : <>&nbsp;· matching on-chain…</>}
-              </span>
-            </div>
-          )}
+          <div style={{ marginTop: 16 }}>
+            <span className="banner">
+              <span className="dot" />
+              framework <b>snapshot {SNAPSHOT_AS_OF}</b>&nbsp;· 6 markets live on{" "}
+              <a href={`${ARCSCAN}/address/${FACTORY}`} target="_blank" rel="noopener noreferrer">
+                Arc testnet
+              </a>
+            </span>
+          </div>
         </section>
 
         {/* how it works */}

@@ -16,13 +16,16 @@ const scp = Source_Code_Pro({
   display: "swap",
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://pharos-lhm.vercel.app";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://lighthousemacro.github.io/pharos";
+// trailing slash so a relative og image resolves under the /pharos basePath
+const BASE = SITE_URL.endsWith("/") ? SITE_URL : SITE_URL + "/";
 const TITLE = "Pharos: two prices on every macro market";
 const DESCRIPTION =
   "Binary macro markets on Arc where the Lighthouse Macro framework posts a fair-value probability next to the crowd's. The spread is the product.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(BASE),
   title: TITLE,
   description: DESCRIPTION,
   openGraph: {
@@ -33,7 +36,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: [
       {
-        url: "/og.png",
+        url: "og.png",
         width: 1200,
         height: 630,
         alt: "Pharos. Macro prediction markets priced by the Lighthouse Macro framework. Live on Arc testnet.",
@@ -46,7 +49,7 @@ export const metadata: Metadata = {
     creator: "@LHMacro",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/og.png"],
+    images: ["og.png"],
   },
 };
 

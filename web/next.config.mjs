@@ -1,8 +1,12 @@
 /** @type {import('next').NextConfig} */
+// Static export for GitHub Pages. The site renders from a baked framework
+// snapshot (lib/snapshot.ts) and links each market to Arcscan for live
+// on-chain state. basePath = the project-pages subpath.
 const nextConfig = {
   reactStrictMode: true,
-  env: {
-    PHAROS_PRICING_URL: process.env.PHAROS_PRICING_URL || "http://127.0.0.1:6910",
-  },
+  output: "export",
+  basePath: "/pharos",
+  trailingSlash: true,
+  images: { unoptimized: true },
 };
 export default nextConfig;

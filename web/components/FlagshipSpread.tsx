@@ -1,7 +1,5 @@
-"use client";
-
 import { Market } from "@/lib/types";
-import BetPanel from "@/components/BetPanel";
+import ChainCTA from "@/components/ChainCTA";
 import { pillarName } from "@/lib/labels";
 
 const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
@@ -107,10 +105,10 @@ export default function FlagshipSpread({ m }: { m: Market }) {
       </div>
 
       {live ? (
-        <BetPanel market={m.market_address as string} resolved={m.resolved} />
+        <ChainCTA market={m.market_address as string} resolved={m.resolved} />
       ) : (
         <div className="nochain">
-          Connect on Arc testnet to take the other side. Live market matching…
+          Live on Arc testnet. Market matching…
         </div>
       )}
     </div>

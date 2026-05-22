@@ -1,42 +1,15 @@
-import { NextResponse } from "next/server";
-import type { Tier } from "@/lib/types";
+import type { Market } from "@/lib/types";
 
-export const dynamic = "force-dynamic";
+// Framework snapshot captured 2026-05-22 from the live Lighthouse_Master.db,
+// merged with the live Arc testnet market addresses + seeded crowd price.
+// The static site renders from this; every market links to Arcscan so the
+// on-chain state (and any trades) is verifiable live. Re-bake by re-running
+// scripts/gen_snapshot (pricing engine on :6910) when the data moves.
+export const SNAPSHOT_AS_OF = "2026-05-22";
+export const FACTORY = "0xfA2D29c4bEd132009D029308810240863c1B3Cc9";
+export const ARCSCAN = "https://testnet.arcscan.app";
 
-const PRICING = process.env.PHAROS_PRICING_URL || "http://127.0.0.1:6910";
-
-// Curated conviction tiers — set from OUT-OF-SAMPLE evidence, never the raw
-// in-sample shrink (the in-sample fit overstates skill; that is the lesson
-// behind the whole board). See research/EDGE_FINDINGS.md.
-const TIERS: Record<string, { tier: Tier; conviction: string; note: string }> = {
-  CPI_MOM: {
-    tier: "edge",
-    conviction: "full",
-    note: "OOS-validated: the Inflation Heat pillar beats a naive trend baseline out of sample. Full conviction.",
-  },
-  GDP: {
-    tier: "signal",
-    conviction: "moderate",
-    note: "Capex Thrust + Consumer Pulse, calibrated and out-of-sample checked (IC +0.20, holds OOS). Moderate conviction.",
-  },
-  NFP: {
-    tier: "abstain",
-    conviction: "none",
-    note: "The in-sample fit looks strong but does not survive out of sample. The framework declines to post conviction here.",
-  },
-  FOMC_CUT: {
-    tier: "experimental",
-    conviction: "modeled",
-    note: "A transparent rate reaction function, not a calibrated market. Shown for completeness.",
-  },
-};
-const ORDER: Tier[] = ["edge", "signal", "abstain", "experimental"];
-
-// Real engine output captured 2026-05-22 against the live Lighthouse_Master.db.
-// Served as the framework snapshot when the local pricing engine is
-// unreachable (e.g. the public deploy). Crowd prices and the on-chain
-// framework price are read LIVE from Arc regardless — see /api/chain.
-const SAMPLE_MARKETS = [
+export const BOARD: Market[] = [
   {
     "kind": "CPI_MOM",
     "label": "US Headline CPI \u2014 consistent trend",
@@ -75,7 +48,14 @@ const SAMPLE_MARKETS = [
     },
     "reasoning": "Consistent trend nowcast 5.30 % 3m/6m saar vs strike 3.00. PCI at +0.02 sigma (IC +0.30, bal-acc 0.57, n=241). Conviction 1.00 -> framework 83.2% YES.",
     "market_key": "CPI_MOM:May 2026",
-    "resolve_dt": "2026-06-10T13:30:00"
+    "resolve_dt": "2026-06-10T13:30:00",
+    "tier": "edge",
+    "conviction": "full",
+    "tier_note": "OOS-validated: the Inflation Heat pillar beats a naive trend baseline out of sample. Full conviction.",
+    "crowd_prob": 0.5,
+    "on_chain": true,
+    "framework_on_chain": true,
+    "market_address": "0x327f5C99eaDf35022c833dBD734A21e8C7C52614"
   },
   {
     "kind": "GDP",
@@ -116,7 +96,14 @@ const SAMPLE_MARKETS = [
     },
     "reasoning": "Consistent trend nowcast 1.87 % saar vs strike 2.00. BCI+CCI at -0.28 sigma (IC +0.20, bal-acc 0.61, n=103). Conviction 0.78 -> framework 48.0% YES.",
     "market_key": "GDP:Q1 2026 (2nd)",
-    "resolve_dt": "2026-05-28T13:30:00"
+    "resolve_dt": "2026-05-28T13:30:00",
+    "tier": "signal",
+    "conviction": "moderate",
+    "tier_note": "Capex Thrust + Consumer Pulse, calibrated and out-of-sample checked (IC +0.20, holds OOS). Moderate conviction.",
+    "crowd_prob": 0.5,
+    "on_chain": true,
+    "framework_on_chain": true,
+    "market_address": "0x343d8Da8834c3CFA75540b12bD16946d78390130"
   },
   {
     "kind": "NFP",
@@ -156,7 +143,14 @@ const SAMPLE_MARKETS = [
     },
     "reasoning": "Consistent trend nowcast 97.62 k jobs vs strike 125.00. LFI at +0.08 sigma (IC -0.24, bal-acc 0.64, n=248). Conviction 0.86 -> framework 46.1% YES.",
     "market_key": "NFP:May 2026",
-    "resolve_dt": "2026-06-05T13:30:00"
+    "resolve_dt": "2026-06-05T13:30:00",
+    "tier": "abstain",
+    "conviction": "none",
+    "tier_note": "The in-sample fit looks strong but does not survive out of sample. The framework declines to post conviction here.",
+    "crowd_prob": 0.5,
+    "on_chain": true,
+    "framework_on_chain": true,
+    "market_address": "0xFb1d30Ca3Ea856174b48338660B01C2b081E5973"
   },
   {
     "kind": "FOMC_CUT",
@@ -197,46 +191,13 @@ const SAMPLE_MARKETS = [
     },
     "reasoning": "Reaction function: REC_PROB 0.18, MRI +0.00 sigma, core trend 3.13% (gap +1.13). P(>=25bps cut) 26.6%.",
     "market_key": "FOMC_CUT:Jun 2026",
-    "resolve_dt": "2026-06-17T19:00:00"
+    "resolve_dt": "2026-06-17T19:00:00",
+    "tier": "experimental",
+    "conviction": "modeled",
+    "tier_note": "A transparent rate reaction function, not a calibrated market. Shown for completeness.",
+    "crowd_prob": 0.5,
+    "on_chain": true,
+    "framework_on_chain": true,
+    "market_address": "0x01F223cb6B5EA0eB7C4BEb61f42439158ee33ac1"
   }
 ];
-
-type Mkt = {
-  kind: string;
-  resolve_dt?: string;
-  information_state?: { as_of?: string };
-  [k: string]: unknown;
-};
-
-function board<T extends Mkt>(markets: T[]) {
-  const byKind = new Map<string, T>();
-  for (const m of markets) {
-    if (!TIERS[m.kind]) continue;
-    const cur = byKind.get(m.kind);
-    if (!cur || (m.resolve_dt ?? "") < (cur.resolve_dt ?? "")) byKind.set(m.kind, m);
-  }
-  const out = [...byKind.values()].map((m) => ({ ...m, ...TIERS[m.kind] }));
-  out.sort(
-    (a, b) =>
-      ORDER.indexOf(a.tier) - ORDER.indexOf(b.tier) ||
-      (a.resolve_dt ?? "").localeCompare(b.resolve_dt ?? "")
-  );
-  return out;
-}
-
-export async function GET() {
-  try {
-    const r = await fetch(`${PRICING}/markets?within_days=60`, {
-      cache: "no-store",
-      signal: AbortSignal.timeout(45000),
-    });
-    if (!r.ok) throw new Error(`pricing ${r.status}`);
-    const data = await r.json();
-    const markets = board(data.markets ?? []);
-    const as_of = markets[0]?.information_state?.as_of;
-    return NextResponse.json({ markets, count: markets.length, source: "live", as_of });
-  } catch {
-    const markets = board(SAMPLE_MARKETS);
-    return NextResponse.json({ markets, count: markets.length, source: "sample", as_of: "2026-05-22" });
-  }
-}

@@ -1,5 +1,5 @@
 import { Market } from "@/lib/types";
-import BetPanel from "@/components/BetPanel";
+import ChainCTA from "@/components/ChainCTA";
 import { pillarName, KIND_LABEL } from "@/lib/labels";
 
 const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
@@ -111,7 +111,7 @@ export default function MarketCard({ m }: { m: Market }) {
       )}
 
       {live ? (
-        <BetPanel market={m.market_address as string} resolved={m.resolved} />
+        <ChainCTA market={m.market_address as string} resolved={m.resolved} />
       ) : (
         <div className="nochain">No live on-chain market matched. Model quote only.</div>
       )}
