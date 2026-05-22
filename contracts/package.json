@@ -11,8 +11,8 @@
     "deploy:arc": "hardhat run scripts/deploy.ts --network arc"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "hardhat": "^2.22.10",
+    "@nomicfoundation/hardhat-toolbox": "^7.0.0",
+    "hardhat": "^3.5.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   },
