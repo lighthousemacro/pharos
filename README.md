@@ -1,4 +1,4 @@
-# Pharos
+# hackathon 
 
 **Macro prediction markets on Arc, priced by the Lighthouse Macro framework.**
 
